@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <script src="https://cdn.tailwindcss.com"></script>
+   <title>Poker</title>
+</head>
+
+<body class="bg-cover bg-[url('{{  url_for('static', filename='cardsimg/table.png') }}')]">
+
+   <div class="h-screen flex items-center justify-center bg-black bg-opacity-40">
+        <div class="container border-gray-500 border-4 bg-black bg-opacity-50 p-14 rounded-2xl">
+            <div>
+                <h1 class="font-extrabold text-center text-4xl text-white my-5">
+                Your Hands {{ pic }}
+                </h1>
+            </div>
+            <div class="flex justify-center space-x-4 h-96 m-10">
+                <img id="img0" src="{{  url_for('static', filename='cardsimg/' + pic[0] + '.png') }}" alt="" srcset="">
+                <img id="img1" src="{{  url_for('static', filename='cardsimg/' + pic[1] + '.png') }}" alt="" srcset="">
+            </div>
+        </div>
+   </div>
+</body>
+
+
+</html>
