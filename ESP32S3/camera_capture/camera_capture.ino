@@ -37,8 +37,8 @@
 // ===========================
 // Enter your WiFi credentials
 // ===========================
-const char* ssid = "DCSlab_2.4G";
-const char* password = "!@#$dcswifi4share";
+const char* ssid = "wifi-ssid";
+const char* password = "*********";
 
 WiFiClient client;
 void startCameraServer();
