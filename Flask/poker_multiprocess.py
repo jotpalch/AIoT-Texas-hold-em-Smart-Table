@@ -6,11 +6,6 @@ import threading
 from multiprocessing import Process, Pipe 
 from collections import Counter
 
-g_runs = 0 
-g_wins = 0
-g_chop = 0 
-g_lock = threading.Lock()
-
 class MonteCarlo:
 
     def __init__(self) -> None:
@@ -147,66 +142,79 @@ class MonteCarlo:
         if self.mode == 1:
             conn.send([self.chop, self.wins, self.runs])
             conn.close()
-            
 
-def Threading_Run(player1_hand, player2_hand, sim_times):
-    thread_num = 10
-    thread_sim_time = int(sim_times / thread_num) 
-    current_table_cards = {}
-    player_count = 2
-    process_list = []
-    process_sim_list = []
-    pipe_list = []
-    start_time = time.time()
-    for i in range(thread_num):
-        temp = MonteCarlo()
-        process_sim_list.append(temp)
-        temp.mode = 1 
-        parent_conn, child_conn = Pipe()
-        pipe_list.append(parent_conn)
-        p = Process(target=temp.Run, args=(player1_hand, player2_hand, current_table_cards, player_count, thread_sim_time, 20, child_conn,))    
-        process_list.append(p)
-        p.start()
-        # t = threading.Thread(target=temp.Run, args=(player1_hand, player2_hand, current_table_cards, player_count, thread_sim_time, 20,))
-        # thread_list.append(t)
-    for p in process_list:
-        p.join()
-    print("--- %s thread mode seconds ---" % (time.time() - start_time))
-    runs = 0
-    wins = 0
-    chop = 0
-    for _pipe in pipe_list:
-        data = _pipe.recv()
-        chop = chop + data[0]
-        wins = wins + data[1]
-        runs = runs + data[2]
-    return (runs, wins, chop)
-        
+class MonteCarlo_multiprocess:     
+
+    def __init__(self) -> None:
+        self.runs = 0
+        self.wins = 0
+        self.chop = 0
+
+    def GetRate(self) -> tuple:
+        """
+        ( "Win Rate w/o Chop", "Win Rate w/  Chop", "Chop Rate" )
+        """
+        return (
+            round(self.wins*100/float(self.runs-self.chop), 2),
+            round(self.wins*100/float(self.runs), 2),
+            round(self.chop*100/float(self.runs), 2),
+        )
+
+    def Run(self, my_hands, op_hands, current_table_cards, PlayerAmount=2, maxRuns=100000, maxSecs=10):
+        process_num = 10
+        process_sim_times = int(maxRuns / process_num) 
+        current_table_cards = {}
+
+        process_list = []
+        process_sim_list = []
+        pipe_list = []
+
+        for i in range(process_num):
+            temp = MonteCarlo()
+            process_sim_list.append(temp)
+            temp.mode = 1 
+            parent_conn, child_conn = Pipe()
+            pipe_list.append(parent_conn)
+            p = Process(target=temp.Run, args=(my_hands, op_hands, current_table_cards, PlayerAmount, process_sim_times, maxSecs, child_conn,))    
+            process_list.append(p)
+            p.start()
+
+        for p in process_list:
+            p.join()
+
+        for _pipe in pipe_list:
+            data = _pipe.recv()
+            self.chop = self.chop + data[0]
+            self.wins = self.wins + data[1]
+            self.runs = self.runs + data[2]
             
 
 if __name__ == '__main__':
-    Simulation = MonteCarlo()
     PlayerAmount = 2
     my_hands = {('Q', 'S'), ('Q', 'D')}
     op_hands = {}
     current_table_cards = {}
 
+    Simulation = MonteCarlo()
     start_time = time.time()
+
     Simulation.Run(my_hands, op_hands, current_table_cards, PlayerAmount, 200000, 20, 0)
-    print("--- %s normal mode seconds ---" % (time.time() - start_time))
-
-    total = Threading_Run(my_hands, op_hands, 200000)
-
     rate = Simulation.GetRate()
+
+    print("--- %s Normal mode seconds ---" % (time.time() - start_time))
     print("Normal Mode:")
     print(f"Win Rate w/o Chop : {rate[0]}")
     print(f"Win Rate w/  Chop : {rate[1]}")
     print(f"Chop Rate         : {rate[2]}")
-    Simulation.runs = total[0]
-    Simulation.wins = total[1]
-    Simulation.chop = total[2]
-    rate = Simulation.GetRate()
-    print("Thread Mode (with 10 thread):")
-    print(f"Win Rate w/o Chop : {rate[0]}")
-    print(f"Win Rate w/  Chop : {rate[1]}")
-    print(f"Chop Rate         : {rate[2]}")
+
+    Simulation_multiprocess = MonteCarlo_multiprocess()
+    start_time = time.time()
+
+    Simulation_multiprocess.Run(my_hands, op_hands, current_table_cards, PlayerAmount, 200000, 20)
+    rate_multiprocess = Simulation_multiprocess.GetRate()
+
+    print("--- %s Multiprocess mode seconds ---" % (time.time() - start_time))
+    print("Multiprocess Mode (with 10 thread):")
+    print(f"Win Rate w/o Chop : {rate_multiprocess[0]}")
+    print(f"Win Rate w/  Chop : {rate_multiprocess[1]}")
+    print(f"Chop Rate         : {rate_multiprocess[2]}")
