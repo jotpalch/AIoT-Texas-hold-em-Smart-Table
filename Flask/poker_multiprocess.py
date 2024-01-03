@@ -160,30 +160,30 @@ class MonteCarlo_multiprocess:
             round(self.chop*100/float(self.runs), 2),
         )
 
-    def Run(self, my_hands, op_hands, current_table_cards, PlayerAmount=2, maxRuns=100000, maxSecs=10):
+    def Run(self, my_hands, op_hands, current_table_cards, PlayerAmount=2, maxRuns=100000, maxSecs=10) -> None:
+        """
+        Use multi-process to evaluate win rate with MonteCarlo algorithm 
+        """
         process_num = 10
         process_sim_times = int(maxRuns / process_num) 
         current_table_cards = {}
-
         process_list = []
-        process_sim_list = []
         pipe_list = []
 
         for i in range(process_num):
             temp = MonteCarlo()
-            process_sim_list.append(temp)
-            temp.mode = 1 
-            parent_conn, child_conn = Pipe()
+            temp.mode = 1                       # mode 1 means multi-process mode 
+            parent_conn, child_conn = Pipe()    # create pipe for child process to use 
             pipe_list.append(parent_conn)
             p = Process(target=temp.Run, args=(my_hands, op_hands, current_table_cards, PlayerAmount, process_sim_times, maxSecs, child_conn,))    
-            process_list.append(p)
+            process_list.append(p)              # record the process which is going to run
             p.start()
 
         for p in process_list:
             p.join()
 
         for _pipe in pipe_list:
-            data = _pipe.recv()
+            data = _pipe.recv()                 # get the result from pipe
             self.chop = self.chop + data[0]
             self.wins = self.wins + data[1]
             self.runs = self.runs + data[2]
@@ -214,7 +214,7 @@ if __name__ == '__main__':
     rate_multiprocess = Simulation_multiprocess.GetRate()
 
     print("--- %s Multiprocess mode seconds ---" % (time.time() - start_time))
-    print("Multiprocess Mode (with 10 thread):")
+    print("Multiprocess Mode (with 10 processes):")
     print(f"Win Rate w/o Chop : {rate_multiprocess[0]}")
     print(f"Win Rate w/  Chop : {rate_multiprocess[1]}")
     print(f"Chop Rate         : {rate_multiprocess[2]}")
