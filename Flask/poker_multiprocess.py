@@ -1,8 +1,6 @@
 import time
 import random
-import numpy as np
 import itertools as iter
-import threading
 from multiprocessing import Process, Pipe 
 from collections import Counter
 
@@ -117,16 +115,18 @@ class MonteCarlo:
             all_cards = set(iter.product(self.values, self.suites))
         
             players_hands = []
+            table_cards = []
             players_hands.append( self.Convert(my_hands) )
-            all_cards -= my_hands
-
-            table_cards = self.Convert(current_table_cards) | set(random.sample([*all_cards], k=5-len(current_table_cards)))
-            all_cards -= table_cards
+            all_cards -= self.Convert(my_hands)
 
             if len(op_hands) > 0:
                 players_hands.append( self.Convert(op_hands) )
-                all_cards -= op_hands
+                all_cards -= self.Convert(op_hands)
+                table_cards = self.Convert(current_table_cards) | set(random.sample([*all_cards], k=5-len(current_table_cards)))
+                all_cards -= table_cards
             else:
+                table_cards = self.Convert(current_table_cards) | set(random.sample([*all_cards], k=5-len(current_table_cards)))
+                all_cards -= table_cards
                 hands = set(random.sample([*all_cards], k=2))
                 players_hands.append(hands)
                 all_cards -= hands
@@ -166,7 +166,6 @@ class MonteCarlo_multiprocess:
         """
         process_num = 10
         process_sim_times = int(maxRuns / process_num) 
-        current_table_cards = {}
         process_list = []
         pipe_list = []
 
@@ -191,9 +190,9 @@ class MonteCarlo_multiprocess:
 
 if __name__ == '__main__':
     PlayerAmount = 2
-    my_hands = {('Q', 'S'), ('Q', 'D')}
-    op_hands = {}
-    current_table_cards = {}
+    my_hands = {('A', 'S'), ('A', 'C')}
+    op_hands = {('A', 'D'), ('2', 'C')}
+    current_table_cards = {('K', 'D'), ('Q', 'D'), ('J', 'D'), ('T', 'D')}
 
     Simulation = MonteCarlo()
     start_time = time.time()
