@@ -6,6 +6,7 @@ from flask_cors import CORS
 import torch
 import json
 import random
+import requests
 
 import poker_multiprocess
 
@@ -19,6 +20,8 @@ app.secret_key = b'_qweqwrwqrtyuiqwe'     # change secret key
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 3 * 1024 * 1024
 
+line_token = "aaaaaaaaaaaaaaa" # change line token
+
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 i = 0
@@ -26,7 +29,7 @@ model = torch.hub.load('../yolov5', 'custom', path='./static/model/best.pt', sou
 mapping = ['TH', 'TS', 'TC', '2D', '2H', '2S', '2C', '3D', '3H', '3S', '3C', '4D', '4H', '4S', '4C', '5D', '5H', '5S', '5C', 'xxxx', 'TD', '6D', '6H', '6S', '6C', '7D', '7H', '7S', '7C', '8D', '8H', '8S', '8C', '9D', '9H', '9S', '9C', 'AD', 'AH', 'AS', 'AC', 'JD', 'JH', 'JS', 'JC', 'KD', 'KH', 'KS', 'KC', 'QD', 'QH', 'QS', 'QC']
 
 prelist = ["card", "card"]
-prelist = ["AS", "AC"]
+notifylist = ["card", "card"]
 rate = ["-", "-", "-"]
 
 prelist_duo = [ ["card", "card"], ["card", "card"] ]
@@ -35,6 +38,18 @@ tablelist = ["card", "card", "card", "card", "card"]
 
 is_game_start = 0
 
+def notify(msg, li):
+    global notifylist
+    url = 'https://notify-api.line.me/api/notify'
+    headers = {
+        'Authorization': 'Bearer ' + line_token 
+    }
+    data = {
+        'message': msg
+    }
+    if notifylist != li :
+        data = requests.post(url, headers=headers, data=data) 
+        notifylist = li
 
 def predict(filename):
     global prelist
