@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+   <script src="https://cdn.tailwindcss.com"></script>
+   <title>[LIVE] AIoT Texas hold-em Smart Table</title>
+</head>
+
+<body class="bg-cover bg-[url('{{  url_for('static', filename='cardsimg/table.png') }}')]">
+
+   <div class="h-screen flex items-center justify-center bg-black bg-opacity-40">
+
+      <div class="container border-gray-500 border-4 bg-black bg-opacity-50 p-3 rounded-2xl">
+         <div>
+            <h1 class="font-extrabold text-center text-4xl text-white my-5">
+               BOARD
+            </h1>
+            <div class="flex justify-center">
+               <a href="/pre_table" class="bg-red-400 text-center">PRESS</a>
+            </div>
+         </div>
+         <div class="flex justify-center space-x-4 h-48 m-3">
+            <img id="img0" src="{{  url_for('static', filename='cardsimg/' + tablelist[0] + '.png') }}" alt="" srcset="">
+            <img id="img1" src="{{  url_for('static', filename='cardsimg/' + tablelist[1] + '.png') }}" alt="" srcset="">
+            <img id="img2" src="{{  url_for('static', filename='cardsimg/' + tablelist[2] + '.png') }}" alt="" srcset="">
+            <img id="img3" src="{{  url_for('static', filename='cardsimg/' + tablelist[3] + '.png') }}" alt="" srcset="">
+            <img id="img4" src="{{  url_for('static', filename='cardsimg/' + tablelist[4] + '.png') }}" alt="" srcset="">
+         </div>
+         <div class="flex justify-around">
+            <div class="p-10">
+               <h1 class="font-extrabold text-center text-4xl text-gray-50">
+                  Player 1
+               </h1>
+               <div class="flex justify-center space-x-4 h-36 m-10">
+                    <img id="img_my0" src="{{  url_for('static', filename='cardsimg/' + prelist_duo[0][0] + '.png') }}" alt="" srcset="">
+                    <img id="img_my1" src="{{  url_for('static', filename='cardsimg/' + prelist_duo[0][1] + '.png') }}" alt="" srcset="">
+               </div>
+               <div class="flex justify-center space-x-4 h-24 m-1">
+                  <div class="flex-col border-gray-500 border-4 px-2 min-w-48 text-center rounded-lg bg-gray-700">
+                     <h2 class="font-bold text-lg p-2 text-gray-100">
+                        Win Rate w/o Chop
+                     </h2>
+                     <h1 class="font-extrabold text-2xl text-green-400" id="r0_my">
+                        {{ rate_duo[0][0] }} %
+                     </h1>
+                  </div>
+                  <div class="flex-col border-gray-500 border-4 px-2 min-w-48 text-center rounded-lg bg-gray-700">
+                     <h2 class="font-bold text-lg p-2 text-gray-100">
+                        Win Rate w/ Chop
+                     </h2>
+                     <h1 class="font-extrabold text-2xl text-green-400" id="r1_my">
+                        {{ rate_duo[0][1] }} %
+                     </h1>
+                  </div>
+                  <div class="flex-col border-gray-500 border-4 px-2 min-w-48 text-center rounded-lg bg-gray-700">
+                     <h2 class="font-bold text-lg p-2 text-gray-100">
+                        Chop Rate
+                     </h2>
+                     <h1 class="font-extrabold text-2xl text-green-400" id="r2_my">
+                        {{ rate_duo[0][2] }} %
+                     </h1>
+                  </div>
+               </div>
+            </div>
+            <div class="p-10">
+               <h1 class="font-extrabold text-center text-4xl text-gray-50">
+                  Player 2
+               </h1>
+               <div class="flex justify-center space-x-4 h-36 m-10">
+                    <img id="img_op0" src="{{  url_for('static', filename='cardsimg/' + prelist_duo[1][0] + '.png') }}" alt="" srcset="">
+                    <img id="img_op1" src="{{  url_for('static', filename='cardsimg/' + prelist_duo[1][1] + '.png') }}" alt="" srcset="">
+               </div>
+               <div class="flex justify-center space-x-4 h-24 m-1">
+                  <div class="flex-col border-gray-500 border-4 px-2 min-w-48 text-center rounded-lg bg-gray-700">
+                     <h2 class="font-bold text-lg p-2 text-gray-100">
+                        Win Rate w/o Chop
+                     </h2>
+                     <h1 class="font-extrabold text-2xl text-green-400" id="r0_op">
+                        {{ rate_duo[1][0] }} %
+                     </h1>
+                  </div>
+                  <div class="flex-col border-gray-500 border-4 px-2 min-w-48 text-center rounded-lg bg-gray-700">
+                     <h2 class="font-bold text-lg p-2 text-gray-100">
+                        Win Rate w/ Chop
+                     </h2>
+                     <h1 class="font-extrabold text-2xl text-green-400" id="r1_op">
+                        {{ rate_duo[1][1] }} %
+                     </h1>
+                  </div>
+                  <div class="flex-col border-gray-500 border-4 px-2 min-w-48 text-center rounded-lg bg-gray-700">
+                     <h2 class="font-bold text-lg p-2 text-gray-100">
+                        Chop Rate
+                     </h2>
+                     <h1 class="font-extrabold text-2xl text-green-400" id="r2_op">
+                        {{ rate_duo[1][2] }} %
+                     </h1>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</body>
+
+<script>
+   $(function(){
+      setInterval(getinfo_live, 3000);
+   });
+   function getinfo_live(){
+      $.ajax({
+         url: "/getinfo_live",
+         type: 'POST',
+         data: {},
+         dataType: "json",
+         success: function(data){
+            // console.log(data["rate"]+" %");
+            $("#img0").attr("src","/static/cardsimg/" + data["tablelist"][0] +".png");
+            $("#img1").attr("src","/static/cardsimg/" + data["tablelist"][1] +".png");
+            $("#img2").attr("src","/static/cardsimg/" + data["tablelist"][2] +".png");
+            $("#img3").attr("src","/static/cardsimg/" + data["tablelist"][3] +".png");
+            $("#img4").attr("src","/static/cardsimg/" + data["tablelist"][4] +".png");
+            $("#img_my0").attr("src","/static/cardsimg/" + data["prelist_duo"][0][0] +".png");
+            $("#img_my1").attr("src","/static/cardsimg/" + data["prelist_duo"][0][1] +".png");
+            $("#img_op0").attr("src","/static/cardsimg/" + data["prelist_duo"][1][0] +".png");
+            $("#img_op1").attr("src","/static/cardsimg/" + data["prelist_duo"][1][1] +".png");
+            $("#r0_my").html(data["rate_duo"][0][0]+" %");
+            $("#r1_my").html(data["rate_duo"][0][1]+" %");
+            $("#r2_my").html(data["rate_duo"][0][2]+" %");
+            $("#r0_op").html(data["rate_duo"][1][0]+" %");
+            $("#r1_op").html(data["rate_duo"][1][1]+" %");
+            $("#r2_op").html(data["rate_duo"][1][2]+" %");
+         }
+      })
+   }
+   
+
+
+</script>
+
+</html>
