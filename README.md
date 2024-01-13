@@ -55,6 +55,16 @@ python main.py
 
 Visit [http://localhost:38999](http://localhost:38999) in your browser to access the web interface.
 
+## Running the Application with Docker
+
+### Pull the Docker Image
+To get started, pull the latest Docker image for the AIoT Texas Hold'em Smart Table application:
+
+```bash
+docker pull ghcr.io/jotpalch/aiot-texas-hold-em-smart-table:latest
+docker run --rm -d -p 38999:38999/tcp aiot-texas-hold-em-smart-table:latest 
+```
+
 ## Usage
 
 1. Flash the ESP32 with the provided firmware in the folder [/ESP32S3](https://github.com/jotpalch/AIoT-Texas-hold-em-Smart-Table/tree/98383745c9483ef6930425e589467164eaca7d5f/ESP32S3) and replace the API with your domain and change the wifi infomation in the file [main.ino](https://github.com/jotpalch/AIoT-Texas-hold-em-Smart-Table/blob/98383745c9483ef6930425e589467164eaca7d5f/ESP32S3/main.ino).
