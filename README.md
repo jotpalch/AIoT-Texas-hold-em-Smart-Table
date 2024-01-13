@@ -1,5 +1,10 @@
 # AIoT-Texas-hold-em-Smart-Table
 
+![](https://github.com/jotpalch/AIoT-Texas-hold-em-Smart-Table/assets/49465120/15804e6a-26ec-408c-b389-70d8ac17a2c2)
+![](https://github.com/jotpalch/AIoT-Texas-hold-em-Smart-Table/assets/49465120/896083ee-56b6-4781-bf7b-77e7c7467dde)
+
+[Google Slide Link (zh-tw)](https://docs.google.com/presentation/d/1eHHE75cVTDKX-oiytssVUKOchTtuO_02/edit?usp=sharing&ouid=110986964650494650772&rtpof=true&sd=true)
+
 ## Overview
 
 This project aims to provide a simple yet effective solution for rookie Texas Hold'em players to improve their understanding of pre-flop win rates. The system includes an ESP32-based device with computer vision capabilities for card detection, a Monte Carlo algorithm for win rate calculation, and a 2-player live broadcasting real-time win rate webpage. The computer vision component is built upon the Poker Cards Computer Vision Project by Roboflow, utilizing the YOLOv5 object detection model.
@@ -78,6 +83,15 @@ docker run --rm -d -p 38999:38999/tcp aiot-texas-hold-em-smart-table:latest
 - Poker Cards Computer Vision Project by Roboflow - [Link](https://universe.roboflow.com/roboflow-100/poker-cards-cxcvz)
 - YOLOv5 by Ultralytics - [Link](https://github.com/ultralytics/yolov5)
 - Vector-playing-cards - [Link](https://code.google.com/archive/p/vector-playing-cards/downloads)
+
+## Performance Enhancement
+
+We have implemented a multi-process approach to accelerate the Monte Carlo algorithm for calculating hand win rates. In the case of 200,000 simulations, we achieved a 72% reduction in computation time, decreasing from the original single-process time of 6.87 seconds to 1.90 seconds.  
+
+- Single Process: 6.87 seconds
+- Multi-Process: 1.90 seconds (72% reduction)
+
+![Performance Enhancement](https://github.com/jotpalch/AIoT-Texas-hold-em-Smart-Table/assets/49465120/7b40c112-4c1b-49f8-a34c-62c3684bf1b8)
 
 ## License
 
